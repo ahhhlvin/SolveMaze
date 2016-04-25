@@ -6,7 +6,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
@@ -25,7 +24,7 @@ public class Maze
 
     public static void main(String[] args)
     {
-        String moves = new String();
+        String moves = "";
         ArrayList<String> visited = new ArrayList<>();
         System.out.println(solveMaze("https://challenge.flipboard.com/start", moves, visited));
     }
@@ -77,7 +76,7 @@ public class Maze
             }
 
 
-            JSONObject jsonObj = new JSONObject(run(url));
+            JSONObject jsonObj = new JSONObject(GetData(url));
             Move currMove = new Move();
             JSONArray adjacentArr = jsonObj.getJSONArray("adjacent");
             for(int i = 0; i < adjacentArr.length(); i++)
@@ -96,20 +95,19 @@ public class Maze
             if(currMove.end)
             {
 
-                                                String checkLink = "https://challenge.flipboard.com/check?s=" + identifier + "&guess=" + movesTracker;
+                String checkLink = "https://challenge.flipboard.com/check?s=" + identifier + "&guess=" + movesTracker;
 
-                                                JSONObject checkObj = new JSONObject(run(checkLink));
-                                                boolean checkResult = checkObj.getBoolean("success");
+                JSONObject checkObj = new JSONObject(GetData(checkLink));
+                boolean checkResult = checkObj.getBoolean("success");
 
-                                                if(checkResult)
-                                                {
-                                                    System.out.println("SUCCESS! " + movesTracker);
-                                                }
-                                                else
-                                                {
-                                                    System.out
-                                                            .println("FAILED :(");
-                                                }
+                if(checkResult)
+                {
+                    System.out.println("SUCCESS! " + movesTracker);
+                }
+                else
+                {
+                    System.out.println("FAILED :(");
+                }
 
                 return currMove.letterStep;
             }
@@ -124,14 +122,14 @@ public class Maze
                                 .get(i).getX() + "&y=" + currMove.adjacentSteps.get(i).getY();
                     }
 
-//                    if (!visited.contains(nextLink))
-//                    {
-                        String successPath = solveMaze(nextLink, movesTracker, visited);
-                        if (!successPath.equals(""))
-                        {
-                            return (currMove.letterStep += successPath);
-                        }
-//                    }
+                    //                    if (!visited.contains(nextLink))
+                    //                    {
+                    String successPath = solveMaze(nextLink, movesTracker, visited);
+                    if(! successPath.equals(""))
+                    {
+                        return (currMove.letterStep += successPath);
+                    }
+                    //                    }
 
                     counter--;
                 }
@@ -156,7 +154,7 @@ public class Maze
     }
 
 
-    public static String run(String url) throws IOException
+    public static String GetData(String url) throws IOException
     {
 
         String result = null;
